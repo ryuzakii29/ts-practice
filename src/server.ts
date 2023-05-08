@@ -3,12 +3,12 @@ import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import Logging from './library/Logging';
-import authorRoutes from './routes/Author';
+import authorRoutes, { route } from './routes/Author';
 import bookRoutes from './routes/Book';
 import { Client } from '@googlemaps/google-maps-services-js';
 const client = new Client({});
 
-const router = express();
+export const router = express();
 
 /** Connect to Mongo */
 mongoose.set('strictQuery', true);
@@ -97,6 +97,7 @@ client
     })
     .then((r) => {
         console.log(r.data.results[0]);
+        Logging.warning(r.data.results[0].geometry);
     })
     .catch((e) => {
         console.log(e.response.data.error_message);
