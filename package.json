@@ -8,7 +8,8 @@
         "serve": "nodemon src/server.ts",
         "build": "rm -rf build/ ** tsc",
         "postinstall": "tsc",
-        "test": "jest"
+        "test": "jest",
+        "coverage": "npx jest --coverage"
     },
     "author": "",
     "license": "ISC",
