@@ -21,10 +21,12 @@ export const ValidateJoi = (schema: ObjectSchema) => {
 export const Schemas = {
     author: {
         create: Joi.object<IAuthor>({
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            address: Joi.string()
         }),
         update: Joi.object<IAuthor>({
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            address: Joi.string()
         })
     },
     book: {
