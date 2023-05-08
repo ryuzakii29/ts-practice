@@ -5,6 +5,8 @@ import { config } from './config/config';
 import Logging from './library/Logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
+import { Client } from '@googlemaps/google-maps-services-js';
+const client = new Client({});
 
 const router = express();
 
@@ -69,3 +71,33 @@ const StartServer = () => {
 
     http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 };
+
+// client
+//     .elevation({
+//         params: {
+//             locations: [{ lat: 14.610991, lng: 121.03032 }],
+//             key: process.env.GOOGLEMAPS_KEY || ''
+//         },
+//         timeout: 1000 // milliseconds
+//     })
+//     .then((r) => {
+//         console.log(r.data.results[0].resolution);
+//     })
+//     .catch((e) => {
+//         console.log(e.response.data.error_message);
+//     });
+// let latlng = { lat: 14.610991, lng: 121.03032 };
+client
+    .geocode({
+        params: {
+            address: 'Yondu Inc',
+            key: process.env.GOOGLEMAPS_KEY || ''
+        },
+        timeout: 1000 // milliseconds
+    })
+    .then((r) => {
+        console.log(r.data.results[0]);
+    })
+    .catch((e) => {
+        console.log(e.response.data.error_message);
+    });
