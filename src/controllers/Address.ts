@@ -5,32 +5,52 @@ import getLoc from '../utils/geocode';
 import Logging from '../library/Logging';
 
 const createAddress = async (req: Request, res: Response, next: NextFunction) => {
-    const { roomNumber, bldgNumber, bldgName, street, barangay, poBox, city, province, postalCode, country, delivery_area, longitude, latitude, municipality, region, area } = req.body;
-
-    const address = new Address({
-        _id: new mongoose.Types.ObjectId(),
-        roomNumber,
-        bldgNumber,
-        bldgName,
-        street,
-        barangay,
+    const {
+        floorRoomNumber,
+        houseBuildingNumber,
+        buildingName,
+        streetNumberName,
+        barangayDistrict,
         poBox,
         city,
         province,
         postalCode,
+        timeZone,
         country,
-        delivery_area,
-        longitude,
+        deliveryArea,
         latitude,
+        longitude,
+        municipality,
+        region,
+        area
+    } = req.body;
+
+    const address = new Address({
+        _id: new mongoose.Types.ObjectId(),
+        floorRoomNumber,
+        houseBuildingNumber,
+        buildingName,
+        streetNumberName,
+        barangayDistrict,
+        poBox,
+        city,
+        province,
+        postalCode,
+        timeZone,
+        country,
+        deliveryArea,
+        latitude,
+        longitude,
         municipality,
         region,
         area
     });
 
-    let combinedAddress: string = `${roomNumber} ${bldgNumber} ${bldgName} ${street} ${barangay} ${poBox} ${city}  ${province}  ${postalCode} ${country} ${delivery_area} ${longitude} ${latitude} ${municipality} ${region}`;
-    console.log(await getLoc(combinedAddress.replace(/ +(?= )/g, '')));
+    let combinedAddress: string = `${floorRoomNumber} ${houseBuildingNumber} ${streetNumberName} ${barangayDistrict} ${poBox} ${city}  ${province}  ${postalCode} ${country} ${deliveryArea} ${longitude} ${latitude} ${municipality} ${region} ${area}`;
 
-    Logging.error(combinedAddress.replace(/ +(?= )/g, ''));
+    let inputAddress = await getLoc(combinedAddress.replace(/ +(?= )/g, ''));
+    console.log(inputAddress);
+    Logging.warning(combinedAddress.replace(/ +(?= )/g, ''));
     return address
         .save()
         .then((address) => res.status(201).json({ address }))
