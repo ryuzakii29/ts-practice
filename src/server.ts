@@ -5,6 +5,9 @@ import { config } from './config/config';
 import Logging from './library/Logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
+import addressRoutes from './routes/Address';
+
+import getLoc from './utils/geocode';
 
 export const router = express();
 
@@ -52,6 +55,7 @@ const StartServer = () => {
     /** Routes */
     router.use('/authors', authorRoutes);
     router.use('/books', bookRoutes);
+    router.use('/address', addressRoutes);
 
     /** Healthcheck */
     router.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }));
@@ -69,3 +73,9 @@ const StartServer = () => {
 
     http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 };
+let t = async () => {
+    let location = await getLoc('Yondu Inc');
+    let { formatted_address, address_components }: any = location;
+    console.log(address_components);
+};
+t();

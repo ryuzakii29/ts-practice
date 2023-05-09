@@ -13,7 +13,8 @@ const getLoc = async (address: string) => {
         })
         .then((r) => {
             // Logging.warning(r.data.results[0].formatted_address);
-            return r.data.results[0].formatted_address;
+            // return r.data.results[0].address_components;
+            return r.data.results[0];
         })
         .catch((e) => {
             console.log(e.response.data.error_message);
