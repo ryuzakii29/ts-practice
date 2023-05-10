@@ -55,7 +55,7 @@ const createAddress = async (req: Request, res: Response, next: NextFunction) =>
     return address
         .save()
         .then((address) => {
-            console.log(address);
+            // console.log(address);
             res.status(201).json({ address });
         })
         .catch((error) => res.status(500).json({ error }));
@@ -75,31 +75,31 @@ const readAll = (req: Request, res: Response, next: NextFunction) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
-const updateAddress = (req: Request, res: Response, next: NextFunction) => {
-    const addressId = req.params.addressId;
+// const updateAddress = (req: Request, res: Response, next: NextFunction) => {
+//     const addressId = req.params.addressId;
 
-    return Address.findById(addressId)
-        .then((address) => {
-            if (address) {
-                address.set(req.body);
+//     return Address.findById(addressId)
+//         .then((address) => {
+//             if (address) {
+//                 address.set(req.body);
 
-                return address
-                    .save()
-                    .then((address) => res.status(201).json({ address }))
-                    .catch((error) => res.status(500).json({ error }));
-            } else {
-                return res.status(404).json({ message: 'not found' });
-            }
-        })
-        .catch((error) => res.status(500).json({ error }));
-};
+//                 return address
+//                     .save()
+//                     .then((address) => res.status(201).json({ address }))
+//                     .catch((error) => res.status(500).json({ error }));
+//             } else {
+//                 return res.status(404).json({ message: 'not found' });
+//             }
+//         })
+//         .catch((error) => res.status(500).json({ error }));
+// };
 
-const deleteAddress = (req: Request, res: Response, next: NextFunction) => {
-    const addressId = req.params.addressId;
+// const deleteAddress = (req: Request, res: Response, next: NextFunction) => {
+//     const addressId = req.params.addressId;
 
-    return Address.findByIdAndDelete(addressId)
-        .then((address) => (address ? res.status(201).json({ address, message: 'Deleted' }) : res.status(404).json({ message: 'not found' })))
-        .catch((error) => res.status(500).json({ error }));
-};
+//     return Address.findByIdAndDelete(addressId)
+//         .then((address) => (address ? res.status(201).json({ address, message: 'Deleted' }) : res.status(404).json({ message: 'not found' })))
+//         .catch((error) => res.status(500).json({ error }));
+// };
 
-export default { createAddress, readAddress, readAll, updateAddress, deleteAddress };
+export default { createAddress, readAddress, readAll };
