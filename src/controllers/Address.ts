@@ -5,9 +5,9 @@ import getLoc from '../utils/geocode';
 import Logging from '../library/Logging';
 
 const createAddress = async (req: Request, res: Response, next: NextFunction) => {
-    let combinedAddress: string = `${req.body.address}`;
+    let reqAddress: string = `${req.body.address}`;
 
-    let geocodeResult = await getLoc(combinedAddress.replace(/ +(?= )/g, ''));
+    let geocodeResult = await getLoc(reqAddress.replace(/ +(?= )/g, ''));
     let {
         MEFAddress,
         floorRoomNumber,
