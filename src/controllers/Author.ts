@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Author from '../models/Author';
-import getLoc from '../utils/geocode';
 
 const createAuthor = async (req: Request, res: Response, next: NextFunction) => {
     const { name, address } = req.body;
@@ -11,7 +10,6 @@ const createAuthor = async (req: Request, res: Response, next: NextFunction) => 
         name,
         address
     });
-    console.log(await getLoc(address));
 
     return author
         .save()

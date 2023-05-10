@@ -74,8 +74,8 @@ const StartServer = () => {
     http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 };
 let t = async () => {
-    let location = await getLoc('The Globe Tower');
+    let MEFLocation = await getLoc('The Globe Tower');
 
-    // console.log(location);
+    // console.log(MEFLocation);
 };
 t();

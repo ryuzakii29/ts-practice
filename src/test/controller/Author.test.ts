@@ -4,7 +4,7 @@ import { config } from '../../config/config';
 
 const request = require('supertest');
 
-beforeEach(async () => {
+beforeAll(async () => {
     mongoose.set('strictQuery', true);
     await mongoose.connect(config.mongo.url);
 });
@@ -25,14 +25,14 @@ const mockData = [
 ];
 
 describe('POST /authors', () => {
-    it('should create an author', () => {
-        const res = request(Author).post('/authors').send({
+    it('should create an author', async () => {
+        const res = await request(Author).post('/authors').send({
             name: 'Test Name'
         });
 
-        console.log('TeST:', res.author, res.body);
-
         expect(res.statusCode).toBe(201);
-        expect(res.body.author.name).toBe('Test Name');
+        expect(res.body.author).toBe({
+            name: 'Test Name'
+        });
     });
 });

@@ -5,11 +5,15 @@ import getLoc from '../utils/geocode';
 import Logging from '../library/Logging';
 
 const createAddress = async (req: Request, res: Response, next: NextFunction) => {
-    const {
+    let combinedAddress: string = `${req.body.address}`;
+
+    let geocodeResult = await getLoc(combinedAddress.replace(/ +(?= )/g, ''));
+    let {
+        MEFAddress,
         floorRoomNumber,
         houseBuildingNumber,
         buildingName,
-        streetNumberName,
+        street,
         barangayDistrict,
         poBox,
         city,
@@ -23,14 +27,14 @@ const createAddress = async (req: Request, res: Response, next: NextFunction) =>
         municipality,
         region,
         area
-    } = req.body;
+    }: any = geocodeResult;
 
     const address = new Address({
         _id: new mongoose.Types.ObjectId(),
         floorRoomNumber,
         houseBuildingNumber,
         buildingName,
-        streetNumberName,
+        street,
         barangayDistrict,
         poBox,
         city,
@@ -43,17 +47,17 @@ const createAddress = async (req: Request, res: Response, next: NextFunction) =>
         longitude,
         municipality,
         region,
-        area
+        area,
+        MEFAddress
     });
 
-    let combinedAddress: string = `${floorRoomNumber} ${houseBuildingNumber} ${streetNumberName} ${barangayDistrict} ${poBox} ${city}  ${province}  ${postalCode} ${country} ${deliveryArea} ${longitude} ${latitude} ${municipality} ${region} ${area}`;
-
-    let inputAddress = await getLoc(combinedAddress.replace(/ +(?= )/g, ''));
-    console.log(inputAddress);
-    Logging.warning(combinedAddress.replace(/ +(?= )/g, ''));
+    // Logging.warning(combinedAddress.replace(/ +(?= )/g, ''));
     return address
         .save()
-        .then((address) => res.status(201).json({ address }))
+        .then((address) => {
+            console.log(address);
+            res.status(201).json({ address });
+        })
         .catch((error) => res.status(500).json({ error }));
 };
 
@@ -67,7 +71,7 @@ const readAddress = (req: Request, res: Response, next: NextFunction) => {
 
 const readAll = (req: Request, res: Response, next: NextFunction) => {
     return Address.find()
-        .then((addresss) => res.status(200).json({ addresss }))
+        .then((address) => res.status(200).json({ address }))
         .catch((error) => res.status(500).json({ error }));
 };
 

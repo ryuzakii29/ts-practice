@@ -6,7 +6,7 @@ interface AddressDetails {
     floorRoomNumber: string;
     houseBuildingNumber: string;
     buildingName: string;
-    streetNumberName: string;
+    street: string;
     barangayDistrict: string;
     poBox: string;
     city: string;
@@ -20,6 +20,29 @@ interface AddressDetails {
     municipality: string;
     region: string;
     area: string;
+    MEFAddress: {
+        city: string;
+        country: string;
+        locality: string;
+        postcode: string;
+        postcodeExtension: string;
+        stateOrProvince: string;
+        streetName: string;
+        streetNr: string;
+        streetNrLast: string;
+        streetNrLastSuffix: string;
+        streetNrSuffix: string;
+        streetSuffix: string;
+        streetType: string;
+        geographicSubAddress: {
+            buildingName: string;
+            subUnit: string; // subUnitNumber or subUnitType
+            levelType: string;
+            levelNumber: string;
+            privateStreetNumber: string;
+            privateStreetName: string;
+        };
+    };
 }
 
 const getLoc = async (address: string) => {
@@ -27,7 +50,7 @@ const getLoc = async (address: string) => {
         floorRoomNumber: '',
         houseBuildingNumber: '',
         buildingName: '',
-        streetNumberName: '',
+        street: '',
         barangayDistrict: '',
         poBox: '',
         city: '',
@@ -40,10 +63,33 @@ const getLoc = async (address: string) => {
         longitude: 0,
         municipality: '',
         region: '',
-        area: ''
+        area: '',
+        MEFAddress: {
+            city: '',
+            country: '',
+            locality: '',
+            postcode: '',
+            postcodeExtension: '',
+            stateOrProvince: '',
+            streetName: '',
+            streetNr: '',
+            streetNrLast: '',
+            streetNrLastSuffix: '',
+            streetNrSuffix: '',
+            streetSuffix: '',
+            streetType: '',
+            geographicSubAddress: {
+                buildingName: '',
+                subUnit: '', // subUnitNumber or subUnitType
+                levelType: '',
+                levelNumber: '',
+                privateStreetNumber: '',
+                privateStreetName: ''
+            }
+        }
     };
 
-    let add = await client
+    return await client
         .geocode({
             params: {
                 address,
@@ -52,76 +98,86 @@ const getLoc = async (address: string) => {
             timeout: 1000 // milliseconds
         })
         .then((r) => {
-            // Logging.warning(r.data.results[0].formatted_address);
-            Logging.warning(r.data.results[0].address_components);
             let { address_components, geometry }: any = r.data.results[0];
 
             for (const component of address_components) {
                 if (component.types.includes('floor')) {
                     details.floorRoomNumber = component.long_name;
+                    details.MEFAddress.geographicSubAddress.levelType = component.long_name;
                 }
                 if (component.types.includes('room')) {
                     details.floorRoomNumber += ' ' + component.long_name;
+                    details.MEFAddress.geographicSubAddress.levelNumber = component.long_name;
                 }
                 if (component.types.includes('street_number')) {
-                    details.streetNumberName = component.long_name;
+                    details.street = component.long_name;
+                    details.MEFAddress.streetNr = component.long_name;
                 }
                 if (component.types.includes('route')) {
-                    details.streetNumberName += ' ' + component.long_name;
+                    details.street += ' ' + component.long_name;
+                    details.MEFAddress.streetType = component.long_name;
                 }
                 if (component.types.includes('premise')) {
                     details.buildingName = component.long_name;
+                    details.MEFAddress.geographicSubAddress.buildingName = component.long_name;
                 }
                 if (component.types.includes('subpremise')) {
                     details.buildingName += ' ' + component.long_name;
+                    details.MEFAddress.geographicSubAddress.buildingName += ' ' + component.long_name;
                 }
                 if (component.types.includes('neighborhood')) {
                     details.barangayDistrict = component.long_name;
-                }
-                if (component.types.includes('postal_code')) {
-                    details.postalCode = component.long_name;
+                    details.MEFAddress.locality = component.long_name;
                 }
                 if (component.types.includes('postal_code_prefix')) {
-                    details.postalCode += '-' + component.long_name;
+                    details.postalCode = component.long_name;
+                    details.MEFAddress.postcode = component.long_name;
+                }
+                if (component.types.includes('postal_code')) {
+                    details.postalCode += ' ' + component.long_name;
+                    details.MEFAddress.postcode += ' ' + component.long_name;
                 }
                 if (component.types.includes('postal_code_suffix')) {
-                    details.postalCode += '-' + component.long_name;
+                    details.postalCode += ' ' + component.long_name;
+                    details.MEFAddress.postcodeExtension = component.long_name;
                 }
                 if (component.types.includes('post_box')) {
                     details.poBox = component.long_name;
                 }
                 if (component.types.includes('locality')) {
                     details.city = component.long_name;
+                    details.MEFAddress.city = component.long_name;
                 }
                 if (component.types.includes('administrative_area_level_1')) {
                     details.province = component.long_name;
+                    details.MEFAddress.stateOrProvince = component.long_name;
                 }
                 if (component.types.includes('country')) {
                     details.country = component.long_name;
+                    details.MEFAddress.country = component.long_name;
                 }
                 if (component.types.includes('time_zone')) {
                     details.timeZone = component.long_name;
                 }
                 if (component.types.includes('postal_town')) {
                     details.deliveryArea = component.long_name;
+                    details.MEFAddress.locality = component.long_name;
                 }
                 if (component.types.includes('municipality')) {
                     details.municipality = component;
-                }
-                if (component.types.includes('postal_code')) {
-                    details.postalCode = component.long_name;
+                    details.MEFAddress.locality += ' ' + component.long_name;
                 }
             }
             details.latitude = geometry.location.lat;
             details.longitude = geometry.location.lng;
-            console.log('Details:', details);
+
+            // Logging.warning(r.data.results[0].address_components);
+            // console.log('Details:', details);
             return details;
         })
         .catch((e) => {
             console.log(e.response.data.error_message);
         });
-
-    return add;
 };
 
 export default getLoc;
