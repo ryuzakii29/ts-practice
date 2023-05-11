@@ -13,7 +13,7 @@ const res = {
 const next = jest.fn();
 beforeAll(async () => {
     mongoose.set('strictQuery', false);
-    await mongoose.connect(config.mongo.url);
+    await mongoose.connect(config.mongo.test_url);
 });
 
 afterAll(async () => {
@@ -22,7 +22,7 @@ afterAll(async () => {
 
 // afterEach(async () => {
 //     await Address.deleteMany({});
-// });
+// }); ----------> clear database
 const address1 = new Address({
     floorRoomNumber: '',
     houseBuildingNumber: '',
@@ -72,7 +72,6 @@ describe('Address Controller', () => {
         expect(res.status).toHaveBeenCalledWith(200);
     });
     it('should return an address', async () => {
-        await address1.save();
         const request: any = {
             params: {
                 addressId: '645b9e930702476379c8fcfc'
@@ -88,20 +87,26 @@ describe('Address Controller', () => {
                 address: 'Yondu Inc'
             }
         };
+        // let geocodeResult = await getLoc(request.body.address);
+        // const saveMock = new Address({
+        //     ...geocodeResult,
+        //     _id: '6106da80a0549e1234567890'
+        // });
+        // const ControllerMock = jest.fn();
 
-        await address1.save();
+        // jest.spyOn(controller, 'createAddress').mockResolvedValue(ControllerMock(request, res, next));
+
+        // const data = ControllerMock(request, res, next);
         await controller.createAddress(request, res, next);
-
         expect(res.status).toHaveBeenCalledWith(201);
+        // expect(data).toEqual({
+        //     saveMock
+        // });
     });
 });
 
 describe('Address Controller Error handling', () => {
     it('should return an error for readAll', async () => {
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn()
-        } as unknown as Response;
         jest.spyOn(Address, 'find').mockRejectedValueOnce(new Error('Database connection error'));
 
         await controller.readAll(req, res, jest.fn());
