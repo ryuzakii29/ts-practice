@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import Author from '../../models/Author';
 import controller from '../../controllers/Author';
-import { config } from '../../config/config';
+import { db } from '../mongoose.unit';
+db();
 
 const req = {} as Request;
 const res = {
@@ -10,14 +10,6 @@ const res = {
     json: jest.fn()
 } as unknown as Response;
 const next = jest.fn();
-beforeAll(async () => {
-    mongoose.set('strictQuery', false);
-    await mongoose.connect(config.mongo.test_url);
-});
-
-afterAll(async () => {
-    await mongoose.connection.close();
-});
 
 describe('Author Controller', () => {
     it('should return all author', async () => {

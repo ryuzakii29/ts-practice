@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import Address from '../../models/Address';
 import controller from '../../controllers/Address';
-import { config } from '../../config/config';
-import getLoc from '../../utils/geocode';
+
+import { db } from '../mongoose.unit';
+db();
 
 const req = {} as Request;
 const res = {
@@ -11,15 +11,6 @@ const res = {
     json: jest.fn()
 } as unknown as Response;
 const next = jest.fn();
-beforeAll(async () => {
-    mongoose.set('strictQuery', false);
-    await mongoose.connect(config.mongo.test_url);
-});
-
-afterAll(async () => {
-    await mongoose.connection.close();
-});
-
 // afterEach(async () => {
 //     await Address.deleteMany({});
 // }); ----------> clear database
