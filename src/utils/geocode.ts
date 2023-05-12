@@ -21,6 +21,8 @@ interface AddressDetails {
     region: string;
     area: string;
     MEFAddress: {
+        id: string;
+        formattedAddress: string;
         city: string;
         country: string;
         locality: string;
@@ -65,6 +67,8 @@ const getLoc = async (address: string) => {
         region: '',
         area: '',
         MEFAddress: {
+            id: '',
+            formattedAddress: '',
             city: '',
             country: '',
             locality: '',
@@ -98,7 +102,7 @@ const getLoc = async (address: string) => {
             timeout: 1000 // milliseconds
         })
         .then((r) => {
-            let { address_components, geometry }: any = r.data.results[0];
+            let { address_components, geometry, formatted_address, place_id }: any = r.data.results[0];
 
             for (const component of address_components) {
                 if (component.types.includes('floor')) {
@@ -111,11 +115,12 @@ const getLoc = async (address: string) => {
                 }
                 if (component.types.includes('street_number')) {
                     details.street = component.long_name;
-                    details.MEFAddress.streetNr = component.long_name;
+                    details.MEFAddress.streetNr = component.short_name;
                 }
                 if (component.types.includes('route')) {
                     details.street += ' ' + component.long_name;
-                    details.MEFAddress.streetType = component.long_name;
+                    details.MEFAddress.streetName = component.long_name;
+                    details.MEFAddress.streetType = component.short_name;
                 }
                 if (component.types.includes('premise')) {
                     details.buildingName = component.long_name;
@@ -170,6 +175,8 @@ const getLoc = async (address: string) => {
             }
             details.latitude = geometry.location.lat;
             details.longitude = geometry.location.lng;
+            details.MEFAddress.formattedAddress = formatted_address;
+            details.MEFAddress.id = place_id;
 
             // Logging.warning(r.data.results[0].address_components);
             // console.log('Details:', details);

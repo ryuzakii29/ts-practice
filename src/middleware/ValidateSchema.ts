@@ -2,6 +2,7 @@ import Joi, { ObjectSchema } from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { IAuthor } from '../models/Author';
 import { IBook } from '../models/Book';
+import { IGeographicAddress } from '../models/Request/GeographicAddressValidation';
 import Logging from '../library/Logging';
 
 export const ValidateJoi = (schema: ObjectSchema) => {
@@ -19,6 +20,16 @@ export const ValidateJoi = (schema: ObjectSchema) => {
 };
 
 export const Schemas = {
+    addressValidation: {
+        req: {
+            query: Joi.object<IGeographicAddress>({
+                buyerId: Joi.string().required(),
+                sellerId: Joi.string().required(),
+                provideAlternative: Joi.boolean(),
+                authorizationCode: Joi.string().required()
+            })
+        }
+    },
     author: {
         create: Joi.object<IAuthor>({
             name: Joi.string().required(),

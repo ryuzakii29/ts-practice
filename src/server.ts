@@ -6,8 +6,11 @@ import Logging from './library/Logging';
 import authorRoutes from './routes/Author';
 import bookRoutes from './routes/Book';
 import addressRoutes from './routes/Address';
+import MEFRoutes from './routes/MEFAddress';
+import geoValidationRoutes from './routes/GeographicAddressValidation';
 
 import getLoc from './utils/geocode';
+import googleValidate from './utils/googleAddressValidation';
 
 export const router = express();
 
@@ -56,6 +59,8 @@ const StartServer = () => {
     router.use('/authors', authorRoutes);
     router.use('/books', bookRoutes);
     router.use('/address', addressRoutes);
+    router.use('/mef/address', MEFRoutes);
+    router.use('/geographicAddressValidation', geoValidationRoutes);
 
     /** Healthcheck */
     router.get('/ping', (req, res, next) => res.status(200).json({ hello: 'world' }));
@@ -73,9 +78,10 @@ const StartServer = () => {
 
     http.createServer(router).listen(config.server.port, () => Logging.info(`Server is running on port ${config.server.port}`));
 };
-let t = async () => {
-    let MEFLocation = await getLoc('The Globe Tower');
+// let t = async () => {
+//     let test = await googleValidate('Yondu Inc');
+//     // let MEFLocation = await getLoc('The Globe Tower');
 
-    // console.log(MEFLocation);
-};
-t();
+//     // console.log(test);
+// };
+// t();
